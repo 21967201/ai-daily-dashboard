@@ -41,3 +41,12 @@ jobs:
           git commit -m "🤖 每日自动更新 $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M')"
           git push origin main
           echo "✅ 推送完成"
+
+      - name: Deploy to Cloudflare Pages
+        if: success()
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=ai-daily-dashboard --branch=main
+          workingDirectory: '.'

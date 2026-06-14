@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI日报晨报 · 2026-06-14</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFA07A 100%);
+            --card-shadow: 0 4px 15px rgba(255, 107, 53, 0.15);
+            --card-hover-shadow: 0 8px 30px rgba(255, 107, 53, 0.25);
+            --text-primary: #2D3436;
+            --text-secondary: #636E72;
+            --bg-card: #FFFFFF;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin:0;
+            padding:0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #FFF5F0 0%, #FFFFFF 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity:0.5; }
+            50% { transform: scale(1.1); opacity:0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index:1;
+            max-width: 1200px;
+            margin:0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow:2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero .date {
+            font-size: 1.2em;
+            opacity:0.95;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity:0.9;
+        }
+
+        .nav {
+            background: white;
+            padding: 15px;
+            position: sticky;
+            top:0;
+            z-index:100;
+            box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin:0 auto;
+            display: flex;
+            justify-content: center;
+            gap:10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding:8px 16px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size:0.9em;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow:0 4px 12px rgba(255, 107, 53, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin:0 auto;
+            padding: 40px 20px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #FF6B35;
+            margin-bottom: 25px;
+            padding-bottom:10px;
+            border-bottom:3px solid #FF6B35;
+            display: flex;
+            align-items: center;
+            gap:10px;
+        }
+
+        .section-title .icon {
+            font-size:1.2em;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap:25px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding:25px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            opacity:0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity:1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom:15px;
+        }
+
+        .global-index {
+            background: var(--primary-gradient);
+            color: white;
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size:0.9em;
+            flex-shrink:0;
+        }
+
+        .source-chip {
+            background: #FFF5F0;
+            color: #FF6B35;
+            padding:4px 12px;
+            border-radius:15px;
+            font-size:0.85em;
+            border:1px solid #FFE0D0;
+        }
+
+        .card-title {
+            font-size:1.15em;
+            font-weight:600;
+            color: var(--text-primary);
+            margin-bottom:12px;
+            line-height:1.4;
+        }
+
+        .card-summary {
+            color: var(--text-secondary);
+            font-size:0.95em;
+            line-height:1.6;
+            margin-bottom:15px;
+            display: -webkit-box;
+            -webkit-line-clamp:3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-time {
+            font-size:0.85em;
+            color: var(--text-secondary);
+        }
+
+        .btn-original {
+            background: var(--primary-gradient);
+            color: white;
+            padding:8px 16px;
+            border-radius:20px;
+            text-decoration: none;
+            font-size:0.9em;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-original:hover {
+            transform: scale(1.05);
+            box-shadow:0 4px 12px rgba(255, 107, 53, 0.4);
+        }
+
+        .footer {
+            background: #2D3436;
+            color: white;
+            text-align: center;
+            padding:30px 20px;
+            margin-top:60px;
+        }
+
+        .footer-info {
+            font-size:0.9em;
+            opacity:0.8;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size:1.8em;
+            }
+            
+            .stats {
+                gap:15px;
+            }
+            
+            .stat-item {
+                min-width:100px;
+                padding:12px 20px;
+            }
+            
+            .cards-grid {
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>🌅 AI日报晨报</h1>
+            <div class="date">2026年06年14日</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">11</span>
+                    <span class="stat-label">总条数</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-number">1</span>
+                    <span class="stat-label">模型发布/更新</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-number">2</span>
+                    <span class="stat-label">产品发布/更新</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">行业动态</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-number">2</span>
+                    <span class="stat-label">技巧与观点</span>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-content">
+            <a href="#section-1" class="nav-link">🤖 模型发布/更新 (1)</a><a href="#section-2" class="nav-link">📱 产品发布/更新 (2)</a><a href="#section-3" class="nav-link">📰 行业动态 (6)</a><a href="#section-4" class="nav-link">💡 技巧与观点 (2)</a>
+        </div>
+    </nav>
+
+    <div class="container" id="content">
+        
+      <div class="section" id="section-1">
+        <h2 class="section-title">
+          <span class="icon">🤖</span>
+          模型发布/更新
+        </h2>
+        <div class="cards-grid">
+          
+        <div class="card" style="animation-delay: 0s">
+          <div class="card-header">
+            <div class="global-index">1</div>
+            <div class="source-chip">公众号：智谱（GLM）</div>
+          </div>
+          <div class="card-title">智谱 GLM-5.2 全量开放，支持 1M 上下文且下周开源</div>
+          <div class="card-summary">GLM-5.2 是智谱迄今能力最强的开源模型，支持真正可用的 1M 上下文，在长程任务中继续保持领先，并被智谱称为最强的...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://mp.weixin.qq.com/s/LDrbtLM0wiCTJorvd5GY9w" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        </div>
+      </div>
+    
+      <div class="section" id="section-2">
+        <h2 class="section-title">
+          <span class="icon">📱</span>
+          产品发布/更新
+        </h2>
+        <div class="cards-grid">
+          
+        <div class="card" style="animation-delay: 0.1s">
+          <div class="card-header">
+            <div class="global-index">2</div>
+            <div class="source-chip">X：Suno (@suno)</div>
+          </div>
+          <div class="card-title">Suno 音轨分离：从零生成更纯净</div>
+          <div class="card-summary">重大更新：Suno 的音轨分离刚刚大幅升级。🚀 我们现在从零重新生成音轨，而非仅仅隔离频率。结果如何？纯净无伪影的音轨...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://x.com/suno/status/2065862499765821916" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.1s">
+          <div class="card-header">
+            <div class="global-index">2</div>
+            <div class="source-chip">X：OpenRouter (@OpenRouter)</div>
+          </div>
+          <div class="card-title">Fusion API：半价达Fable级智能</div>
+          <div class="card-summary">推出Fusion API，市场上最智能的复合模型。 Fusion以一半的价格实现Fable级别的智能。 工作原理如下👇</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://x.com/OpenRouter/status/2065856853989270011" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        </div>
+      </div>
+    
+      <div class="section" id="section-3">
+        <h2 class="section-title">
+          <span class="icon">📰</span>
+          行业动态
+        </h2>
+        <div class="cards-grid">
+          
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">TechCrunch：AI（RSS）</div>
+          </div>
+          <div class="card-title">Anthropic的安全警告可能适得其反——政府已撤回其最强大AI</div>
+          <div class="card-summary">Anthropic对政府撤回其最强大AI模型表达不满，称仅基于一个狭窄的潜在越狱发现就召回已部署给数亿用户的商业模型不合...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://techcrunch.com/2026/06/12/anthropics-safety-warnings-may-have-just-backfired-the-government-has-pulled-the-plug-on-its-most-powerful-ai" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">IT之家（RSS）</div>
+          </div>
+          <div class="card-title">谷歌Android安全负责人因反对军事AI合作辞职</div>
+          <div class="card-summary">谷歌Android平台安全负责人René Mayrhofer辞职，他在5月18日内部告别信中指责公司“丧失道德指针”，批...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.ithome.com/0/963/888.htm" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">Bloomberg：Technology（RSS）</div>
+          </div>
+          <div class="card-title">Anthropic 秘密申请上市，估值 9650 亿美元</div>
+          <div class="card-summary">Anthropic，这家估值达 9650 亿美元的 AI 巨头、史上增长最快的初创公司之一，在秘密提交 IPO 申请后，...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.bloomberg.com/news/articles/2026-06-13/global-capitalism-bets-it-all-on-ai-future-that-alarms-voters" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">Hacker News 热门（buzzing.cc 中文翻译）</div>
+          </div>
+          <div class="card-title">亚马逊首席执行官与美国官员会谈引发对 Anthropic 模型的整治</div>
+          <div class="card-summary">亚马逊 CEO 与美国官员的会谈直接导致美国政府对 Anthropic 公司的 AI 模型采取整治行动。此次事件涉及对 ...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.wsj.com/tech/ai/amazon-ceos-talks-with-u-s-officials-triggered-crackdown-on-anthropic-models-dcc90578" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">IT之家（RSS）</div>
+          </div>
+          <div class="card-title">扎克伯格承认 Meta AI 转型“脱轨”：裁员 10%、转岗 7000 人后组织调整过快</div>
+          <div class="card-summary">路透社披露的 Meta 内部备忘录显示，CEO 扎克伯格承认公司在 AI 转型中组织调整节奏过快，带来员工安置、管理跨度...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.ithome.com/0/963/858.htm" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">Bloomberg：Technology（RSS）</div>
+          </div>
+          <div class="card-title">OpenAI 遭多州总检察长联合调查</div>
+          <div class="card-summary">OpenAI 正被一个由多州总检察长组成的联盟调查，该联盟已向这家人工智能公司索取涵盖广泛主题的信息。</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.bloomberg.com/news/articles/2026-06-13/openai-probed-by-coalition-of-state-attorneys-general" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        </div>
+      </div>
+    
+      <div class="section" id="section-4">
+        <h2 class="section-title">
+          <span class="icon">💡</span>
+          技巧与观点
+        </h2>
+        <div class="cards-grid">
+          
+        <div class="card" style="animation-delay: 0.9s">
+          <div class="card-header">
+            <div class="global-index">10</div>
+            <div class="source-chip">IT之家（RSS）</div>
+          </div>
+          <div class="card-title">SemiAnalysis 洞察 Token 经济：200 美元 AI 订阅榨出 70 倍用量</div>
+          <div class="card-summary">SemiAnalysis 购买了 Anthropic 和 OpenAI 的全部订阅方案，模拟高强度编码任务直至触及每周上...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.ithome.com/0/963/834.htm" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        <div class="card" style="animation-delay: 0.9s">
+          <div class="card-header">
+            <div class="global-index">10</div>
+            <div class="source-chip">Hacker News 热门（buzzing.cc 中文翻译）</div>
+          </div>
+          <div class="card-title">/architect：减少80%的Fable token，Fable负责协调/审核，Codex负责构建</div>
+          <div class="card-summary">/architect项目将Fable token减少80%，由Fable进行协调和审核，Codex负责构建任务。</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/DanMcInerney/architect-loop" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+      
+        </div>
+      </div>
+    
+    </div>
+
+    <footer class="footer">
+        <div class="footer-info">
+            共 <span id="footerTotal">11</span> 条资讯 | 数据来源：AI HOT (aihot.virxact.com)
+        </div>
+    </footer>
+</body>
+</html>
