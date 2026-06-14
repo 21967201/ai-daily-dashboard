@@ -2,8 +2,7 @@ name: Daily AI Report Update
 
 on:
   schedule:
-    # 北京时间每天08:00运行 (UTC+8 = UTC 00:00)
-    - cron: '0 0 * * *'
+    - cron: '0 */2 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,40 +12,27 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - run: cd scripts && npm install
 
-      - name: Install dependencies
-        run: cd scripts && npm install
-
-      - name: Fetch multi-source data and generate HTML
-        env:
+      - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: cd scripts && node generate-html.js
 
-      - name: Commit and Push changes
-        run: |
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ai-daily-dashboard.html || true
-          git diff --cached --quiet && echo "ℹ️ 无更新" && exit 0
-          git commit -m "🤖 每日自动更新 $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M')"
+          git diff --cached --quiet && echo "无更新" && exit 0
+          git commit -m "每2小时自动更新"
           git push origin main
-          echo "✅ 推送完成"
 
-      - name: Deploy to Cloudflare Pages
-        if: success()
-        uses: cloudflare/wrangler-action@v3
+      - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy . --project-name=ai-daily-dashboard --branch=main
-          workingDirectory: '.'

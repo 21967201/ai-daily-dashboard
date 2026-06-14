@@ -5,6 +5,50 @@ const path = require('path');
 const AIHOT_API = 'https://aihot.virxact.com/api/public/daily';
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36';
 
+// ========== 翻译函数 ==========
+// 使用免费的MyMemory API进行中英互译
+async function translateText(text, targetLang = 'zh-CN') {
+  if (!text || text.trim() === '') return text;
+  // 如果已经包含中文，就不翻译
+  if (/[\u4e00-\u9fa5]/.test(text)) return text;
+  
+  try {
+    const res = await axios.get('https://api.mymemory.translated.net/get', {
+      params: {
+        q: text.substring(0, 500), // API限制长度
+        langpair: `en|${targetLang}`
+      },
+      timeout: 8000
+    });
+    
+    const data = res.data;
+    if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+      let translated = data.responseData.translatedText;
+      // 如果翻译结果和原文一样（说明没翻译成功），返回原文
+      if (translated.toLowerCase() === text.toLowerCase()) return text;
+      return translated;
+    }
+  } catch (e) {
+    console.log(`   ⚠️ 翻译失败: ${e.message.substring(0, 80)}`);
+  }
+  return text;
+}
+
+// 批量翻译（带并发控制）
+async function translateBatch(texts, maxConcurrency = 5) {
+  const results = [];
+  for (let i = 0; i < texts.length; i += maxConcurrency) {
+    const batch = texts.slice(i, i + maxConcurrency);
+    const translated = await Promise.all(batch.map(t => translateText(t)));
+    results.push(...translated);
+    if (i + maxConcurrency < texts.length) {
+      // 避免请求过快
+      await new Promise(r => setTimeout(r, 300));
+    }
+  }
+  return results;
+}
+
 // ========== 获取 AI HOT 日报 ==========
 async function fetchAIHot() {
   try {
@@ -26,24 +70,24 @@ async function fetchAIHot() {
 async function fetchGitHubTrending() {
   try {
     const since = new Date();
-    since.setDate(since.getDate() - 2);
+    since.setDate(since.getDate() - 7);
     const sinceStr = since.toISOString().split('T')[0];
     const res = await axios.get('https://api.github.com/search/repositories', {
       params: {
-        q: 'ai OR llm OR agent OR "large language model" created:>' + sinceStr,
+        q: 'ai OR llm OR agent OR "large language model" pushed:>' + sinceStr,
         sort: 'stars',
         order: 'desc',
-        per_page: 8
+        per_page: 10
       },
       headers: { 'User-Agent': USER_AGENT, 'Accept': 'application/vnd.github.v3+json' },
       timeout: 15000
     });
     if (res.data && res.data.items) {
       const items = res.data.items.map(repo => ({
-        title: `⭐ ${repo.name}`,
-        sourceName: 'GitHub',
+        title: repo.name,
+        sourceName: 'GitHub热门',
         sourceUrl: repo.html_url,
-        summary: (repo.description || '').substring(0, 60),
+        summary: (repo.description || '').substring(0, 80),
         sectionLabel: '开源项目'
       }));
       console.log(`✅ GitHub Trending: ${items.length} 个热门项目`);
@@ -63,23 +107,23 @@ async function fetchArxiv() {
         search_query: 'cat:cs.AI OR cat:cs.LG OR cat:cs.CL',
         sortBy: 'submittedDate',
         sortOrder: 'descending',
-        max_results: 8
+        max_results: 10
       },
       timeout: 15000
     });
     const items = [];
     const entries = res.data.match(/<entry>[\s\S]*?<\/entry>/g) || [];
-    for (const entry of entries.slice(0, 6)) {
+    for (const entry of entries.slice(0, 8)) {
       const title = (entry.match(/<title>(.*?)<\/title>/s) || [])[1] || '';
       const link = (entry.match(/<id>(.*?)<\/id>/) || [])[1] || '';
       const summary = (entry.match(/<summary>(.*?)<\/summary>/s) || [])[1] || '';
       if (title && link) {
         items.push({
-          title: `📚 ${title.replace(/\n/g, ' ').trim().substring(0, 50)}`,
-          sourceName: 'ArXiv',
+          title: title.replace(/\n/g, ' ').trim().substring(0, 100),
+          sourceName: '学术论文',
           sourceUrl: link.trim(),
-          summary: summary.replace(/\n/g, ' ').trim().substring(0, 60),
-          sectionLabel: '论文研究'
+          summary: summary.replace(/\n/g, ' ').trim().substring(0, 100),
+          sectionLabel: '前沿研究'
         });
       }
     }
@@ -91,20 +135,20 @@ async function fetchArxiv() {
   return [];
 }
 
-// ========== AI 工具导航数据 ==========
+// ========== AI 工具导航数据（全部中文）==========
 const AI_TOOLS = [
-  { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'OpenAI 对话 AI', icon: '💬' },
-  { name: 'Claude', url: 'https://claude.ai', desc: 'Anthropic 对话 AI', icon: '🧠' },
-  { name: 'Gemini', url: 'https://gemini.google.com', desc: 'Google 多模态 AI', icon: '🔮' },
-  { name: 'DeepSeek', url: 'https://chat.deepseek.com', desc: '深度求索 AI', icon: '🔍' },
-  { name: 'Qwen', url: 'https://chat.qwen.ai', desc: '阿里通义千问', icon: '☁️' },
-  { name: 'Doubao', url: 'https://www.doubao.com', desc: '字节豆包 AI', icon: '🫘' },
-  { name: 'Coze', url: 'https://www.coze.com', desc: '字节 AI Bot 平台', icon: '🤖' },
-  { name: 'Dify', url: 'https://dify.ai', desc: '开源 LLM 应用平台', icon: '🛠️' },
-  { name: 'Hugging Face', url: 'https://huggingface.co', desc: 'AI 模型社区', icon: '🤗' },
-  { name: 'AI HOT', url: 'https://aihot.virxact.com', desc: 'AI 资讯日报', icon: '📰' },
-  { name: 'Product Hunt AI', url: 'https://www.producthunt.com/topics/artificial-intelligence', desc: 'AI 新产品发现', icon: '🚀' },
-  { name: 'Papers with Code', url: 'https://paperswithcode.com', desc: '论文+代码平台', icon: '📝' },
+  { name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'OpenAI旗舰对话助手', icon: '💬' },
+  { name: 'Claude', url: 'https://claude.ai', desc: 'Anthropic深度对话AI', icon: '🧠' },
+  { name: 'Gemini', url: 'https://gemini.google.com', desc: 'Google多模态大模型', icon: '🔮' },
+  { name: 'DeepSeek', url: 'https://chat.deepseek.com', desc: '深度求索国产大模型', icon: '🔍' },
+  { name: '通义千问', url: 'https://chat.qwen.ai', desc: '阿里云通义千问', icon: '☁️' },
+  { name: '豆包', url: 'https://www.doubao.com', desc: '字节跳动豆包助手', icon: '🫘' },
+  { name: 'Coze扣子', url: 'https://www.coze.com', desc: '字节AI智能体平台', icon: '🤖' },
+  { name: 'Dify', url: 'https://dify.ai', desc: '开源LLM应用开发平台', icon: '🛠️' },
+  { name: 'HuggingFace', url: 'https://huggingface.co', desc: '全球最大AI模型社区', icon: '🤗' },
+  { name: 'AI HOT日报', url: 'https://aihot.virxact.com', desc: 'AI行业资讯聚合', icon: '📰' },
+  { name: 'Product Hunt', url: 'https://www.producthunt.com/topics/artificial-intelligence', desc: 'AI新品发现平台', icon: '🚀' },
+  { name: 'Papers with Code', url: 'https://paperswithcode.com', desc: '论文与代码对照平台', icon: '📝' },
 ];
 
 // ========== 生成 HTML ==========
@@ -142,7 +186,8 @@ function generateHTML(allData) {
     '论文研究': '📚',
     '技巧与观点': '💡',
     '开源项目': '⭐',
-    '模型更新': '🧠'
+    '模型更新': '🧠',
+    '前沿研究': '🔬'
   };
 
   const navLinks = sections.map((sec, idx) =>
@@ -153,7 +198,7 @@ function generateHTML(allData) {
     const icon = sectionIcons[section.label] || '📌';
     const itemsHTML = section.items.map(item => {
       const summary = item.summary ?
-        (item.summary.length > 60 ? item.summary.substring(0, 60) + '...' : item.summary) :
+        (item.summary.length > 70 ? item.summary.substring(0, 70) + '...' : item.summary) :
         '';
       const idxHtml = `<div class="global-index">${globalIndex}</div>`;
       globalIndex++;
@@ -544,7 +589,7 @@ function generateHTML(allData) {
 
         <div class="sidebar" id="sidebar-tools">
             <div class="sidebar-box">
-                <div class="sidebar-title">🛠️ AI 工具箱</div>
+                <div class="sidebar-title">🛠️ 常用AI工具</div>
                 ${toolsHTML}
             </div>
 
@@ -557,9 +602,9 @@ function generateHTML(allData) {
                 <div class="sidebar-title">💡 使用说明</div>
                 <ul style="font-size:0.85em; color:var(--text-secondary); line-height:2; padding-left:18px;">
                     <li>搜索框支持标题/来源/摘要关键词过滤</li>
-                    <li>点击🌙按钮切换暗黑模式</li>
-                    <li>数据来源：AI HOT / GitHub / ArXiv</li>
-                    <li>每天北京时间 08:00 自动更新</li>
+                    <li>点击右上角🌙切换暗黑模式</li>
+                    <li>数据来源：AI HOT / GitHub / 学术论文</li>
+                    <li>每2小时自动更新最新资讯</li>
                 </ul>
             </div>
         </div>
@@ -568,8 +613,8 @@ function generateHTML(allData) {
     <footer class="footer">
         <div class="footer-info">
             共 <span id="footerTotal">${totalCount}</span> 条资讯
-            | 数据来源：AI HOT / GitHub Trending / ArXiv
-            | 自动更新：北京时间每天 08:00
+            | 数据来源：AI HOT / GitHub 热门 / 学术论文
+            | 每2小时自动更新
         </div>
     </footer>
 
@@ -604,12 +649,12 @@ function generateHTML(allData) {
         (function() {
             const cards = document.querySelectorAll('.card-title');
             const kwCount = {};
-            const stopWords = ['的','了','是','在','和','与','或','对','为','这','那','一个','如何','怎么','为什么','什么','哪些','with','for','the','and'];
+            const stopWords = ['的','了','是','在','和','与','或','对','为','这','那','一个','如何','怎么','为什么','什么','哪些','with','for','the','and','of','to','in','a','is','that','it','on'];
             cards.forEach(c => {
                 const text = c.textContent;
-                const words = text.split(/[\s,，。、；;！!？?：:""''（）()【】]+/);
+                const words = text.split(/[\s,，。、；;！!？?：:""''（）()【】\-\–\—·]+/);
                 words.forEach(w => {
-                    if (w.length >= 2 && !stopWords.includes(w)) {
+                    if (w.length >= 2 && !stopWords.includes(w.toLowerCase())) {
                         kwCount[w] = (kwCount[w] || 0) + 1;
                     }
                 });
@@ -625,7 +670,7 @@ function generateHTML(allData) {
                     return '<span class="kw-tag ' + cls + '">' + w + '</span>';
                 }).join('');
             } else if (cloud) {
-                cloud.innerHTML = '<span style="color:var(--text-secondary);font-size:0.85em;">数据加载中...</span>';
+                cloud.innerHTML = '<span style="color:var(--text-secondary);font-size:0.85em;">正在加载热词...</span>';
             }
         })();
     </script>
@@ -654,12 +699,38 @@ async function main() {
     result.sections = aihotData.value.sections || [];
   }
 
+  let allExtraItems = [];
+  
   if (githubItems.status === 'fulfilled' && githubItems.value.length > 0) {
-    result.extraItems.push(...githubItems.value);
+    allExtraItems.push(...githubItems.value);
   }
   if (arxivItems.status === 'fulfilled' && arxivItems.value.length > 0) {
-    result.extraItems.push(...arxivItems.value);
+    allExtraItems.push(...arxivItems.value);
   }
+
+  // ========== 翻译所有外文内容 ==========
+  if (allExtraItems.length > 0) {
+    console.log('\n🔄 正在翻译外文内容...');
+    
+    // 收集所有需要翻译的文本
+    const textsToTranslate = [];
+    allExtraItems.forEach(item => {
+      textsToTranslate.push(item.title);
+      textsToTranslate.push(item.summary);
+    });
+    
+    // 批量翻译
+    const translatedTexts = await translateBatch(textsToTranslate);
+    
+    // 将翻译结果写回
+    for (let i = 0; i < allExtraItems.length; i++) {
+      allExtraItems[i].title = translatedTexts[i * 2] || allExtraItems[i].title;
+      allExtraItems[i].summary = translatedTexts[i * 2 + 1] || allExtraItems[i].summary;
+      console.log(`   ✅ [${allExtraItems[i].sourceName}] ${allExtraItems[i].title.substring(0, 40)}...`);
+    }
+  }
+
+  result.extraItems = allExtraItems;
 
   const html = generateHTML(result);
   const outputPath = path.join(__dirname, '..', 'ai-daily-dashboard.html');
@@ -667,7 +738,7 @@ async function main() {
 
   const total = result.sections.reduce((s, sec) => s + sec.items.length, 0) + result.extraItems.length;
   console.log(`\n✅ HTML 已生成: ${outputPath}`);
-  console.log(`   总计: ${total} 条资讯 (含 AI HOT + GitHub + ArXiv)`);
+  console.log(`   总计: ${total} 条资讯 (含 AI HOT + GitHub + 论文，全部已翻译为中文)`);
 }
 
 main().catch(e => {
