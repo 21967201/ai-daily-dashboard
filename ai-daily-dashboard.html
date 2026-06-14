@@ -6,629 +6,844 @@
     <title>AI日报晨报 · 2026-06-14</title>
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFA07A 100%);
-            --card-shadow: 0 4px 15px rgba(255, 107, 53, 0.15);
-            --card-hover-shadow: 0 8px 30px rgba(255, 107, 53, 0.25);
-            --text-primary: #2D3436;
-            --text-secondary: #636E72;
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --primary-light: #FFF5F0;
+            --accent: #6366F1;
+            --accent-light: #EEF2FF;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --bg-main: #FFFBF7;
             --bg-card: #FFFFFF;
+            --bg-sidebar: #F8FAFC;
             --border-radius: 12px;
-            --transition: all 0.3s ease;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 15px rgba(255,107,53,0.12);
+            --shadow-lg: 0 8px 30px rgba(255,107,53,0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin:0; padding:0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            background: linear-gradient(180deg, #FFF5F0 0%, #FFFFFF 100%);
+            background: var(--bg-main);
             color: var(--text-primary);
             line-height: 1.6;
         }
 
         .hero {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 40%, #FF8C42 100%);
             color: white;
-            padding: 60px 20px 40px;
+            padding: 50px 20px 35px;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
-
         .hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: pulse 4s ease-in-out infinite;
+            top: -60%; left: -60%;
+            width: 220%; height: 220%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+            animation: pulse 5s ease-in-out infinite;
         }
+        @keyframes pulse { 0%,100% { transform: scale(1); opacity:0.6; } 50% { transform: scale(1.08); opacity:1; } }
+        .hero-inner { position: relative; z-index:1; max-width: 1200px; margin:0 auto; }
+        .hero h1 { font-size: 2.2em; margin-bottom: 6px; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
+        .hero .date { font-size: 1.1em; opacity:0.95; margin-bottom: 24px; }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+        .stats { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+        .stat-item {
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(10px);
+            padding: 12px 22px;
+            border-radius: var(--border-radius);
+            min-width: 100px;
+            text-align: center;
         }
+        .stat-number { font-size: 1.8em; font-weight: 800; display:block; line-height:1.2; }
+        .stat-label { font-size: 0.82em; opacity:0.88; }
 
-        .hero-content {
+        .search-bar {
+            max-width: 600px;
+            margin: 20px auto 0;
             position: relative;
             z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
         }
-
-        .hero h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px 12px 44px;
+            border: none;
+            border-radius: 30px;
+            font-size: 0.95em;
+            background: rgba(255,255,255,0.95);
+            color: var(--text-primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            outline: none;
         }
-
-        .hero .date {
-            font-size: 1.2em;
-            opacity: 0.95;
-            margin-bottom: 30px;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .stat-item {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            padding: 15px 25px;
-            border-radius: var(--border-radius);
-            min-width: 120px;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+        .search-bar input::placeholder { color: #94A3B8; }
+        .search-bar::before {
+            content: '🔍';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
         }
 
         .nav {
             background: white;
-            padding: 15px;
+            padding: 12px 15px;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
         }
-
-        .nav-content {
+        .nav-inner {
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
-
         .nav-link {
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            padding: 7px 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #F7931E 100%);
             color: white;
             text-decoration: none;
             border-radius: 20px;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            font-weight: 500;
             transition: var(--transition);
             white-space: nowrap;
         }
+        .nav-link:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
-        .nav-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
-        }
-
-        .container {
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 30px 20px;
+        }
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
         }
 
-        .section {
-            margin-bottom: 50px;
-        }
+        .content { min-width: 0; }
 
+        .section { margin-bottom: 40px; }
         .section-title {
-            font-size: 1.8em;
-            color: #FF6B35;
-            margin-bottom: 25px;
+            font-size: 1.5em;
+            color: var(--primary);
+            margin-bottom: 18px;
             padding-bottom: 10px;
-            border-bottom: 3px solid #FF6B35;
+            border-bottom: 2.5px solid var(--primary);
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
-        .section-title .icon {
-            font-size: 1.2em;
+        .section-count {
+            font-size: 0.6em;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 600;
         }
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
         }
 
         .card {
             background: var(--bg-card);
             border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--card-shadow);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
             transition: var(--transition);
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.6s ease forwards;
+            transform: translateY(16px);
+            animation: fadeInUp 0.5s ease forwards;
+            border: 1px solid rgba(255,107,53,0.08);
         }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(255,107,53,0.2); }
+        @keyframes fadeInUp { to { opacity:1; transform: translateY(0); } }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-hover-shadow);
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
+        .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
         .global-index {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, var(--primary) 0%, #F7931E 100%);
             color: white;
-            width: 32px;
-            height: 32px;
+            width: 30px; height: 30px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9em;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85em; flex-shrink: 0;
         }
-
         .source-chip {
-            background: #FFF5F0;
-            color: #FF6B35;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            border: 1px solid #FFE0D0;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+            border: 1px solid rgba(255,107,53,0.15);
         }
-
-        .card-title {
-            font-size: 1.15em;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .card-summary {
-            color: var(--text-secondary);
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-time {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-        }
-
+        .card-title { font-size: 1.05em; font-weight: 600; margin-bottom: 10px; line-height: 1.5; color: var(--text-primary); }
+        .card-summary { color: var(--text-secondary); font-size: 0.9em; line-height: 1.6; margin-bottom: 14px; }
+        .card-footer { display:flex; justify-content:space-between; align-items:center; }
+        .card-time { font-size: 0.82em; color: var(--text-secondary); }
         .btn-original {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, var(--primary) 0%, #F7931E 100%);
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border-radius: 18px;
             text-decoration: none;
-            font-size: 0.9em;
+            font-size: 0.82em;
+            font-weight: 500;
             transition: var(--transition);
-            border: none;
-            cursor: pointer;
         }
+        .btn-original:hover { box-shadow: 0 3px 10px rgba(255,107,53,0.4); transform: scale(1.04); }
 
-        .btn-original:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+        .sidebar { min-width: 0; }
+        .sidebar-box {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.04);
         }
+        .sidebar-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tool-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .tool-card:hover { background: var(--accent-light); border-color: rgba(99,102,241,0.2); }
+        .tool-icon { font-size: 1.3em; flex-shrink: 0; width: 28px; text-align: center; }
+        .tool-name { font-weight: 600; font-size: 0.9em; flex-shrink: 0; }
+        .tool-desc { font-size: 0.78em; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .kw-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+        .kw-tag {
+            padding: 5px 14px;
+            border-radius: 16px;
+            font-size: 0.82em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .kw-tag:hover { transform: scale(1.08); }
+        .kw-1 { background: #FEE2E2; color: #DC2626; }
+        .kw-2 { background: #FEF3C7; color: #D97706; }
+        .kw-3 { background: #DBEAFE; color: #2563EB; }
+        .kw-4 { background: #D1FAE5; color: #059669; }
+        .kw-5 { background: #EDE9FE; color: #7C3AED; }
 
         .footer {
-            background: #2D3436;
+            background: #1E293B;
             color: white;
             text-align: center;
             padding: 30px 20px;
-            margin-top: 60px;
+            margin-top: 50px;
         }
+        .footer-info { font-size: 0.88em; opacity:0.8; }
 
-        .footer-info {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-
-        .btn-refresh {
+        .dark-mode-toggle {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--primary-gradient);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 1em;
-            transition: var(--transition);
+            top: 80px;
+            right: 20px;
+            z-index: 200;
+            background: white;
             border: none;
+            border-radius: 50%;
+            width: 44px; height: 44px;
+            font-size: 1.3em;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        .dark-mode-toggle:hover { transform: scale(1.1); }
+
+        body.dark {
+            --bg-main: #0F172A;
+            --bg-card: #1E293B;
+            --bg-sidebar: #1E293B;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --primary-light: #312E2B;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        body.dark .nav { background: #1E293B; }
+        body.dark .tool-card:hover { background: #312E81; }
+        body.dark .dark-mode-toggle { background: #334155; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.6em; }
+            .stats { gap: 12px; }
+            .stat-item { min-width: 80px; padding: 10px 16px; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .main-layout { padding: 20px 12px; }
+            .sidebar { order: -1; }
         }
 
-        .btn-refresh:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
-        }
-
-        .auto-sync-info {
-            background: #F8F9FA;
-            border-left: 4px solid #FF6B35;
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 8px;
-            font-size: 0.9em;
-            line-height: 1.8;
-        }
-
-        .auto-sync-info h3 {
-            color: #FF6B35;
-            margin-bottom: 10px;
-        }
-
-        .auto-sync-info code {
-            background: #E9ECEF;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
+        .card.hidden { display: none !important; }
+        .highlight { background: #FEF08A; color: #854D0E; padding: 1px 3px; border-radius: 3px; }
+        body.dark .highlight { background: #F59E0B; color: #1E293B; }
     </style>
 </head>
 <body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="切换暗黑模式">🌙</button>
+
     <div class="hero">
-        <div class="hero-content">
-            <h1>🌅 AI日报晨报</h1>
-            <div class="date" id="currentDate">2026年6月14日 星期六</div>
+        <div class="hero-inner">
+            <h1>📰 AI 日报晨报</h1>
+            <div class="date">2026年06年14日</div>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number" id="totalCount">11</span>
+                    <span class="stat-number">25</span>
                     <span class="stat-label">总条数</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number" id="modelCount">1</span>
-                    <span class="stat-label">模型发布/更新</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="productCount">2</span>
-                    <span class="stat-label">产品发布/更新</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="industryCount">6</span>
-                    <span class="stat-label">行业动态</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="paperCount">0</span>
-                    <span class="stat-label">论文研究</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="tipCount">2</span>
-                    <span class="stat-label">技巧与观点</span>
-                </div>
+                        <span class="stat-number">1</span>
+                        <span class="stat-label">模型发布/更新</span>
+                    </div><div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">产品发布/更新</span>
+                    </div><div class="stat-item">
+                        <span class="stat-number">6</span>
+                        <span class="stat-label">行业动态</span>
+                    </div><div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">技巧与观点</span>
+                    </div><div class="stat-item">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">开源项目</span>
+                    </div><div class="stat-item">
+                        <span class="stat-number">6</span>
+                        <span class="stat-label">论文研究</span>
+                    </div>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索资讯标题、来源、摘要..." oninput="filterCards()">
             </div>
         </div>
     </div>
 
     <nav class="nav">
-        <div class="nav-content">
-            <a href="#section-1" class="nav-link">🤖 模型发布/更新 (1)</a>
-            <a href="#section-2" class="nav-link">📦 产品发布/更新 (2)</a>
-            <a href="#section-3" class="nav-link">📰 行业动态 (6)</a>
-            <a href="#section-4" class="nav-link">📚 论文研究 (0)</a>
-            <a href="#section-5" class="nav-link">💡 技巧与观点 (2)</a>
+        <div class="nav-inner">
+            <a href="#section-1" class="nav-link">🤖 模型发布/更新 (1)</a><a href="#section-2" class="nav-link">📱 产品发布/更新 (2)</a><a href="#section-3" class="nav-link">📰 行业动态 (6)</a><a href="#section-4" class="nav-link">💡 技巧与观点 (2)</a><a href="#section-5" class="nav-link">⭐ 开源项目 (8)</a><a href="#section-6" class="nav-link">📚 论文研究 (6)</a>
+            <a href="#sidebar-tools" class="nav-link" style="background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);">🛠️ AI 工具箱</a>
         </div>
     </nav>
 
-    <div class="container" id="content">
-        <!-- 内容将通过JavaScript动态生成 -->
+    <div class="main-layout">
+        <div class="content" id="content">
+            
+      <div class="section" id="section-1">
+        <h2 class="section-title">
+          <span class="icon">🤖</span>
+          模型发布/更新
+          <span class="section-count">1 条</span>
+        </h2>
+        <div class="cards-grid">
+        <div class="card" style="animation-delay: 0s">
+          <div class="card-header">
+            <div class="global-index">1</div>
+            <div class="source-chip">公众号：智谱（GLM）</div>
+          </div>
+          <div class="card-title">智谱 GLM-5.2 全量开放，支持 1M 上下文且下周开源</div>
+          <div class="card-summary">GLM-5.2 是智谱迄今能力最强的开源模型，支持真正可用的 1M 上下文，在长程任务中继续保持领先，并被智谱称为最强的...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://mp.weixin.qq.com/s/LDrbtLM0wiCTJorvd5GY9w" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div></div>
+      </div>
+      <div class="section" id="section-2">
+        <h2 class="section-title">
+          <span class="icon">📱</span>
+          产品发布/更新
+          <span class="section-count">2 条</span>
+        </h2>
+        <div class="cards-grid">
+        <div class="card" style="animation-delay: 0.05s">
+          <div class="card-header">
+            <div class="global-index">2</div>
+            <div class="source-chip">X：Suno (@suno)</div>
+          </div>
+          <div class="card-title">Suno 音轨分离：从零生成更纯净</div>
+          <div class="card-summary">重大更新：Suno 的音轨分离刚刚大幅升级。🚀 我们现在从零重新生成音轨，而非仅仅隔离频率。结果如何？纯净无伪影的音轨...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://x.com/suno/status/2065862499765821916" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.1s">
+          <div class="card-header">
+            <div class="global-index">3</div>
+            <div class="source-chip">X：OpenRouter (@OpenRouter)</div>
+          </div>
+          <div class="card-title">Fusion API：半价达Fable级智能</div>
+          <div class="card-summary">推出Fusion API，市场上最智能的复合模型。 Fusion以一半的价格实现Fable级别的智能。 工作原理如下👇</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://x.com/OpenRouter/status/2065856853989270011" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div></div>
+      </div>
+      <div class="section" id="section-3">
+        <h2 class="section-title">
+          <span class="icon">📰</span>
+          行业动态
+          <span class="section-count">6 条</span>
+        </h2>
+        <div class="cards-grid">
+        <div class="card" style="animation-delay: 0.15000000000000002s">
+          <div class="card-header">
+            <div class="global-index">4</div>
+            <div class="source-chip">TechCrunch：AI（RSS）</div>
+          </div>
+          <div class="card-title">Anthropic的安全警告可能适得其反——政府已撤回其最强大AI</div>
+          <div class="card-summary">Anthropic对政府撤回其最强大AI模型表达不满，称仅基于一个狭窄的潜在越狱发现就召回已部署给数亿用户的商业模型不合...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://techcrunch.com/2026/06/12/anthropics-safety-warnings-may-have-just-backfired-the-government-has-pulled-the-plug-on-its-most-powerful-ai" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.2s">
+          <div class="card-header">
+            <div class="global-index">5</div>
+            <div class="source-chip">IT之家（RSS）</div>
+          </div>
+          <div class="card-title">谷歌Android安全负责人因反对军事AI合作辞职</div>
+          <div class="card-summary">谷歌Android平台安全负责人René Mayrhofer辞职，他在5月18日内部告别信中指责公司“丧失道德指针”，批...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.ithome.com/0/963/888.htm" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.25s">
+          <div class="card-header">
+            <div class="global-index">6</div>
+            <div class="source-chip">Bloomberg：Technology（RSS）</div>
+          </div>
+          <div class="card-title">Anthropic 秘密申请上市，估值 9650 亿美元</div>
+          <div class="card-summary">Anthropic，这家估值达 9650 亿美元的 AI 巨头、史上增长最快的初创公司之一，在秘密提交 IPO 申请后，...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.bloomberg.com/news/articles/2026-06-13/global-capitalism-bets-it-all-on-ai-future-that-alarms-voters" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.30000000000000004s">
+          <div class="card-header">
+            <div class="global-index">7</div>
+            <div class="source-chip">Hacker News 热门（buzzing.cc 中文翻译）</div>
+          </div>
+          <div class="card-title">亚马逊首席执行官与美国官员会谈引发对 Anthropic 模型的整治</div>
+          <div class="card-summary">亚马逊 CEO 与美国官员的会谈直接导致美国政府对 Anthropic 公司的 AI 模型采取整治行动。此次事件涉及对 ...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.wsj.com/tech/ai/amazon-ceos-talks-with-u-s-officials-triggered-crackdown-on-anthropic-models-dcc90578" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.35000000000000003s">
+          <div class="card-header">
+            <div class="global-index">8</div>
+            <div class="source-chip">IT之家（RSS）</div>
+          </div>
+          <div class="card-title">扎克伯格承认 Meta AI 转型“脱轨”：裁员 10%、转岗 7000 人后组织调整过快</div>
+          <div class="card-summary">路透社披露的 Meta 内部备忘录显示，CEO 扎克伯格承认公司在 AI 转型中组织调整节奏过快，带来员工安置、管理跨度...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.ithome.com/0/963/858.htm" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.4s">
+          <div class="card-header">
+            <div class="global-index">9</div>
+            <div class="source-chip">Bloomberg：Technology（RSS）</div>
+          </div>
+          <div class="card-title">OpenAI 遭多州总检察长联合调查</div>
+          <div class="card-summary">OpenAI 正被一个由多州总检察长组成的联盟调查，该联盟已向这家人工智能公司索取涵盖广泛主题的信息。</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.bloomberg.com/news/articles/2026-06-13/openai-probed-by-coalition-of-state-attorneys-general" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div></div>
+      </div>
+      <div class="section" id="section-4">
+        <h2 class="section-title">
+          <span class="icon">💡</span>
+          技巧与观点
+          <span class="section-count">2 条</span>
+        </h2>
+        <div class="cards-grid">
+        <div class="card" style="animation-delay: 0.45s">
+          <div class="card-header">
+            <div class="global-index">10</div>
+            <div class="source-chip">IT之家（RSS）</div>
+          </div>
+          <div class="card-title">SemiAnalysis 洞察 Token 经济：200 美元 AI 订阅榨出 70 倍用量</div>
+          <div class="card-summary">SemiAnalysis 购买了 Anthropic 和 OpenAI 的全部订阅方案，模拟高强度编码任务直至触及每周上...</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://www.ithome.com/0/963/834.htm" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.5s">
+          <div class="card-header">
+            <div class="global-index">11</div>
+            <div class="source-chip">Hacker News 热门（buzzing.cc 中文翻译）</div>
+          </div>
+          <div class="card-title">/architect：减少80%的Fable token，Fable负责协调/审核，Codex负责构建</div>
+          <div class="card-summary">/architect项目将Fable token减少80%，由Fable进行协调和审核，Codex负责构建任务。</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/DanMcInerney/architect-loop" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div></div>
+      </div>
+      <div class="section" id="section-5">
+        <h2 class="section-title">
+          <span class="icon">⭐</span>
+          开源项目
+          <span class="section-count">8 条</span>
+        </h2>
+        <div class="cards-grid">
+        <div class="card" style="animation-delay: 0.55s">
+          <div class="card-header">
+            <div class="global-index">12</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ Third-Eye</div>
+          <div class="card-summary">A production-grade OSINT platform that provides situational </div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/eli-labz/Third-Eye" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.6000000000000001s">
+          <div class="card-header">
+            <div class="global-index">13</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ fable-mode</div>
+          <div class="card-summary">A Claude skill that activates Fable-style agentic behavior: </div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/mrtooher/fable-mode" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.65s">
+          <div class="card-header">
+            <div class="global-index">14</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ ai</div>
+          <div class="card-summary">Notes and operating profiles for working with AI coding agen</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/sgup/ai" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.7000000000000001s">
+          <div class="card-header">
+            <div class="global-index">15</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ taiwan-law-ai-course</div>
+          <div class="card-summary">台灣法律 × AI 課程教材庫</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/mjib007/taiwan-law-ai-course" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.75s">
+          <div class="card-header">
+            <div class="global-index">16</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ hermes-book-oracle</div>
+          <div class="card-summary">The Hermes Series — free book PDFs by Hermes Oracle (AI). Ma</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.8s">
+          <div class="card-header">
+            <div class="global-index">17</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ ai-video-downloader</div>
+          <div class="card-summary">Use AI agents to automatically download videos from the inte</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/MangoX-ai/ai-video-downloader" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.8500000000000001s">
+          <div class="card-header">
+            <div class="global-index">18</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ why-was-fable-banned</div>
+          <div class="card-summary">Spec-first, evidence-gated engineering-procedure enforcement</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/SihyeonJeon/why-was-fable-banned" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 0.9s">
+          <div class="card-header">
+            <div class="global-index">19</div>
+            <div class="source-chip">GitHub</div>
+          </div>
+          <div class="card-title">⭐ blcaptain-meta-skill</div>
+          <div class="card-summary">把重复工作流做成可安装、可验证、可迭代 Agent Skill 的方法论包</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="https://github.com/dososo/blcaptain-meta-skill" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div></div>
+      </div>
+      <div class="section" id="section-6">
+        <h2 class="section-title">
+          <span class="icon">📚</span>
+          论文研究
+          <span class="section-count">6 条</span>
+        </h2>
+        <div class="cards-grid">
+        <div class="card" style="animation-delay: 0.9500000000000001s">
+          <div class="card-header">
+            <div class="global-index">20</div>
+            <div class="source-chip">ArXiv</div>
+          </div>
+          <div class="card-title">📚 EvoArena: Tracking Memory Evolution for Robust LLM</div>
+          <div class="card-summary">Large language model (LLM) agents have achieved strong perfo</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="http://arxiv.org/abs/2606.13681v1" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 1s">
+          <div class="card-header">
+            <div class="global-index">21</div>
+            <div class="source-chip">ArXiv</div>
+          </div>
+          <div class="card-title">📚 Learning to Reason by Analogy via Retrieval-Augmen</div>
+          <div class="card-summary">Retrieval-augmented generation (RAG) has become a standard m</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="http://arxiv.org/abs/2606.13680v1" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 1.05s">
+          <div class="card-header">
+            <div class="global-index">22</div>
+            <div class="source-chip">ArXiv</div>
+          </div>
+          <div class="card-title">📚 Mana: Dexterous Manipulation of Articulated Tools</div>
+          <div class="card-summary">Articulated tool manipulation remains a major challenge in d</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="http://arxiv.org/abs/2606.13677v1" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 1.1s">
+          <div class="card-header">
+            <div class="global-index">23</div>
+            <div class="source-chip">ArXiv</div>
+          </div>
+          <div class="card-title">📚 SpatialClaw: Rethinking Action Interface for Agent</div>
+          <div class="card-summary">Spatial reasoning, the ability to determine where objects ar</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="http://arxiv.org/abs/2606.13673v1" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 1.1500000000000001s">
+          <div class="card-header">
+            <div class="global-index">24</div>
+            <div class="source-chip">ArXiv</div>
+          </div>
+          <div class="card-title">📚 Understanding Truncated Positional Encodings for G</div>
+          <div class="card-summary">Positional encodings (PEs) enhance the power of graph neural</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="http://arxiv.org/abs/2606.13671v1" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div>
+        <div class="card" style="animation-delay: 1.2000000000000002s">
+          <div class="card-header">
+            <div class="global-index">25</div>
+            <div class="source-chip">ArXiv</div>
+          </div>
+          <div class="card-title">📚 Automated reproducibility assessments in the socia</div>
+          <div class="card-summary">Reproducibility in the social and behavioral sciences is typ</div>
+          <div class="card-footer">
+            <div class="card-time">今天</div>
+            <a href="http://arxiv.org/abs/2606.13670v1" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
+          </div>
+        </div></div>
+      </div>
+        </div>
+
+        <div class="sidebar" id="sidebar-tools">
+            <div class="sidebar-box">
+                <div class="sidebar-title">🛠️ AI 工具箱</div>
+                <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">💬</span>
+      <span class="tool-name">ChatGPT</span>
+      <span class="tool-desc">OpenAI 对话 AI</span>
+    </a><a href="https://claude.ai" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🧠</span>
+      <span class="tool-name">Claude</span>
+      <span class="tool-desc">Anthropic 对话 AI</span>
+    </a><a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🔮</span>
+      <span class="tool-name">Gemini</span>
+      <span class="tool-desc">Google 多模态 AI</span>
+    </a><a href="https://chat.deepseek.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🔍</span>
+      <span class="tool-name">DeepSeek</span>
+      <span class="tool-desc">深度求索 AI</span>
+    </a><a href="https://chat.qwen.ai" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">☁️</span>
+      <span class="tool-name">Qwen</span>
+      <span class="tool-desc">阿里通义千问</span>
+    </a><a href="https://www.doubao.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🫘</span>
+      <span class="tool-name">Doubao</span>
+      <span class="tool-desc">字节豆包 AI</span>
+    </a><a href="https://www.coze.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🤖</span>
+      <span class="tool-name">Coze</span>
+      <span class="tool-desc">字节 AI Bot 平台</span>
+    </a><a href="https://dify.ai" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🛠️</span>
+      <span class="tool-name">Dify</span>
+      <span class="tool-desc">开源 LLM 应用平台</span>
+    </a><a href="https://huggingface.co" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🤗</span>
+      <span class="tool-name">Hugging Face</span>
+      <span class="tool-desc">AI 模型社区</span>
+    </a><a href="https://aihot.virxact.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">📰</span>
+      <span class="tool-name">AI HOT</span>
+      <span class="tool-desc">AI 资讯日报</span>
+    </a><a href="https://www.producthunt.com/topics/artificial-intelligence" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">🚀</span>
+      <span class="tool-name">Product Hunt AI</span>
+      <span class="tool-desc">AI 新产品发现</span>
+    </a><a href="https://paperswithcode.com" target="_blank" rel="noopener noreferrer" class="tool-card">
+      <span class="tool-icon">📝</span>
+      <span class="tool-name">Papers with Code</span>
+      <span class="tool-desc">论文+代码平台</span>
+    </a>
+            </div>
+
+            <div class="sidebar-box">
+                <div class="sidebar-title">🔥 今日热词</div>
+                <div class="kw-cloud" id="kwCloud"></div>
+            </div>
+
+            <div class="sidebar-box">
+                <div class="sidebar-title">💡 使用说明</div>
+                <ul style="font-size:0.85em; color:var(--text-secondary); line-height:2; padding-left:18px;">
+                    <li>搜索框支持标题/来源/摘要关键词过滤</li>
+                    <li>点击🌙按钮切换暗黑模式</li>
+                    <li>数据来源：AI HOT / GitHub / ArXiv</li>
+                    <li>每天北京时间 08:00 自动更新</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <footer class="footer">
         <div class="footer-info">
-            共 <span id="footerTotal">11</span> 条资讯 | 数据来源：AI HOT (aihot.virxact.com)
-        </div>
-        <div style="margin-top: 15px;">
-            <button class="btn-refresh" onclick="refreshData()">🔄 刷新数据</button>
+            共 <span id="footerTotal">25</span> 条资讯
+            | 数据来源：AI HOT / GitHub Trending / ArXiv
+            | 自动更新：北京时间每天 08:00
         </div>
     </footer>
 
     <script>
-        // 嵌入的日报数据
-        const dailyData = {
-  "date": "2026-06-14",
-  "generatedAt": "2026-06-14T00:00:00.485Z",
-  "windowStart": "2026-06-13T00:00:00Z",
-  "windowEnd": "2026-06-14T00:00:00Z",
-  "lead": null,
-  "sections": [
-    {
-      "label": "模型发布/更新",
-      "items": [
-        {
-          "title": "智谱 GLM-5.2 全量开放，支持 1M 上下文且下周开源",
-          "summary": "GLM-5.2 是智谱迄今能力最强的开源模型，支持真正可用的 1M 上下文，在长程任务中继续保持领先，并被智谱称为最强的国产 Coding 模型。今晚 5:21 起面向 GLM Coding Plan 全量用户开放（覆盖 Lite、Pro、Max、团队版）。API 将于下周上线，模型下周正式开源，遵循 MIT 协议。",
-          "sourceUrl": "https://mp.weixin.qq.com/s/LDrbtLM0wiCTJorvd5GY9w",
-          "sourceName": "公众号：智谱（GLM）"
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+            document.querySelector('.dark-mode-toggle').textContent = isDark ? '☀️' : '🌙';
         }
-      ]
-    },
-    {
-      "label": "产品发布/更新",
-      "items": [
-        {
-          "title": "Suno 音轨分离：从零生成更纯净",
-          "summary": "重大更新：Suno 的音轨分离刚刚大幅升级。🚀 我们现在从零重新生成音轨，而非仅仅隔离频率。结果如何？纯净无伪影的音轨，可直接拖入你的 DAW。",
-          "sourceUrl": "https://x.com/suno/status/2065862499765821916",
-          "sourceName": "X：Suno (@suno)"
-        },
-        {
-          "title": "Fusion API：半价达Fable级智能",
-          "summary": "推出Fusion API，市场上最智能的复合模型。 Fusion以一半的价格实现Fable级别的智能。 工作原理如下👇",
-          "sourceUrl": "https://x.com/OpenRouter/status/2065856853989270011",
-          "sourceName": "X：OpenRouter (@OpenRouter)"
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark');
+            document.querySelector('.dark-mode-toggle').textContent = '☀️';
         }
-      ]
-    },
-    {
-      "label": "行业动态",
-      "items": [
-        {
-          "title": "Anthropic的安全警告可能适得其反——政府已撤回其最强大AI",
-          "summary": "Anthropic对政府撤回其最强大AI模型表达不满，称仅基于一个狭窄的潜在越狱发现就召回已部署给数亿用户的商业模型不合理。",
-          "sourceUrl": "https://techcrunch.com/2026/06/12/anthropics-safety-warnings-may-have-just-backfired-the-government-has-pulled-the-plug-on-its-most-powerful-ai",
-          "sourceName": "TechCrunch：AI（RSS）"
-        },
-        {
-          "title": "谷歌Android安全负责人因反对军事AI合作辞职",
-          "summary": "谷歌Android平台安全负责人René Mayrhofer辞职，他在5月18日内部告别信中指责公司"丧失道德指针"，批评谷歌悄悄放弃碳中和目标（因AI模型能耗），并与美国战争部签署允许AI用于"任何合法目的"的协议。今年4月下旬谷歌宣布向五角大楼提供AI用于机密工作，2025年2月更新AI原则时移除了不使用AI开发武器或监控工具的承诺。Mayrhofer担忧谷歌AI产品可能被用于针对公民的大规模监控，包括自己和家人。",
-          "sourceUrl": "https://www.ithome.com/0/963/888.htm",
-          "sourceName": "IT之家（RSS）"
-        },
-        {
-          "title": "Anthropic 秘密申请上市，估值 9650 亿美元",
-          "summary": "Anthropic，这家估值达 9650 亿美元的 AI 巨头、史上增长最快的初创公司之一，在秘密提交 IPO 申请后，再次投下重磅炸弹。",
-          "sourceUrl": "https://www.bloomberg.com/news/articles/2026-06-13/global-capitalism-bets-it-all-on-ai-future-that-alarms-voters",
-          "sourceName": "Bloomberg：Technology（RSS）"
-        },
-        {
-          "title": "亚马逊首席执行官与美国官员会谈引发对 Anthropic 模型的整治",
-          "summary": "亚马逊 CEO 与美国官员的会谈直接导致美国政府对 Anthropic 公司的 AI 模型采取整治行动。此次事件涉及对 Anthropic 旗下大语言模型的监管升级，具体措施及模型版本细节尚未披露。",
-          "sourceUrl": "https://www.wsj.com/tech/ai/amazon-ceos-talks-with-u-s-officials-triggered-crackdown-on-anthropic-models-dcc90578",
-          "sourceName": "Hacker News 热门（buzzing.cc 中文翻译）"
-        },
-        {
-          "title": "扎克伯格承认 Meta AI 转型"脱轨"：裁员 10%、转岗 7000 人后组织调整过快",
-          "summary": "路透社披露的 Meta 内部备忘录显示，CEO 扎克伯格承认公司在 AI 转型中组织调整节奏过快，带来员工安置、管理跨度等问题，预计未来"几乎肯定会犯更多错误"。Meta 今年 5 月已裁减全球 10% 员工，并将 7000 人转入 AI 相关新项目。为缓解协作问题，公司将增加团队建设预算，7 月举办黑客松。新成立的应用 AI 工程部门个人贡献者与管理者比例最高达 50:1。扎克伯格重申今年不再全公司裁员。",
-          "sourceUrl": "https://www.ithome.com/0/963/858.htm",
-          "sourceName": "IT之家（RSS）"
-        },
-        {
-          "title": "OpenAI 遭多州总检察长联合调查",
-          "summary": "OpenAI 正被一个由多州总检察长组成的联盟调查，该联盟已向这家人工智能公司索取涵盖广泛主题的信息。",
-          "sourceUrl": "https://www.bloomberg.com/news/articles/2026-06-13/openai-probed-by-coalition-of-state-attorneys-general",
-          "sourceName": "Bloomberg：Technology（RSS）"
-        }
-      ]
-    },
-    {
-      "label": "技巧与观点",
-      "items": [
-        {
-          "title": "SemiAnalysis 洞察 Token 经济：200 美元 AI 订阅榨出 70 倍用量",
-          "summary": "SemiAnalysis 购买了 Anthropic 和 OpenAI 的全部订阅方案，模拟高强度编码任务直至触及每周上限。月费 200 美元的 Claude Max 20x 方案，按 API 价格换算最高可消耗约值 8000 美元的 token；ChatGPT Pro 20x 方案对应最高约值 14000 美元的 token。用户通过订阅可获取 40 至 70 倍的 API 价值，该机构指出这种价格体系在重度用户持续榨满上限后可能难以长期维持。",
-          "sourceUrl": "https://www.ithome.com/0/963/834.htm",
-          "sourceName": "IT之家（RSS）"
-        },
-        {
-          "title": "/architect：减少80%的Fable token，Fable负责协调/审核，Codex负责构建",
-          "summary": "/architect项目将Fable token减少80%，由Fable进行协调和审核，Codex负责构建任务。",
-          "sourceUrl": "https://github.com/DanMcInerney/architect-loop",
-          "sourceName": "Hacker News 热门（buzzing.cc 中文翻译）"
-        }
-      ]
-    }
-  ],
-  "flashes": []
-};
 
-        // 格式化时间为人话
-        function formatTime(isoString) {
-            if (!isoString) return '今天';
-            
-            const now = new Date();
-            const beijingNow = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-            const date = new Date(isoString);
-            const beijingDate = new Date(date.getTime() + (8 * 60 * 60 * 1000));
-            
-            const diffMs = beijingNow - beijingDate;
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-            
-            if (diffHours < 1) {
-                const diffMinutes = Math.floor(diffMs / (1000 * 60));
-                return diffMinutes < 1 ? '刚刚' : `${diffMinutes} 分钟前`;
-            } else if (diffHours < 24) {
-                return `${diffHours} 小时前`;
-            } else if (diffDays === 1) {
-                return `昨天 ${beijingDate.getHours().toString().padStart(2, '0')}:${beijingDate.getMinutes().toString().padStart(2, '0')}`;
-            } else {
-                return `${beijingDate.getMonth() + 1}/${beijingDate.getDate()} ${beijingDate.getHours().toString().padStart(2, '0')}:${beijingDate.getMinutes().toString().padStart(2, '0')}`;
+        function filterCards() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.card');
+            let visible = 0;
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (!keyword || text.includes(keyword)) {
+                    card.classList.remove('hidden');
+                    visible++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            document.getElementById('footerTotal').textContent = visible;
+        }
+
+        (function() {
+            const cards = document.querySelectorAll('.card-title');
+            const kwCount = {};
+            const stopWords = ['的','了','是','在','和','与','或','对','为','这','那','一个','如何','怎么','为什么','什么','哪些','with','for','the','and'];
+            cards.forEach(c => {
+                const text = c.textContent;
+                const words = text.split(/[s,，。、；;！!？?：:""''（）()【】]+/);
+                words.forEach(w => {
+                    if (w.length >= 2 && !stopWords.includes(w)) {
+                        kwCount[w] = (kwCount[w] || 0) + 1;
+                    }
+                });
+            });
+            const sorted = Object.entries(kwCount)
+                .sort((a,b) => b[1] - a[1])
+                .slice(0, 20);
+            const cloud = document.getElementById('kwCloud');
+            if (cloud && sorted.length > 0) {
+                const maxCount = sorted[0][1];
+                cloud.innerHTML = sorted.map(([w, c], i) => {
+                    const cls = 'kw-' + (Math.min(Math.ceil(c / Math.max(maxCount,1) * 5), 5));
+                    return '<span class="kw-tag ' + cls + '">' + w + '</span>';
+                }).join('');
+            } else if (cloud) {
+                cloud.innerHTML = '<span style="color:var(--text-secondary);font-size:0.85em;">数据加载中...</span>';
             }
-        }
-
-        // 截断摘要到60字
-        function truncateSummary(summary) {
-            if (!summary) return '';
-            return summary.length > 60 ? summary.substring(0, 60) + '...' : summary;
-        }
-
-        // 渲染内容
-        function renderContent() {
-            const container = document.getElementById('content');
-            let globalIndex = 1;
-            const sectionIcons = {
-                '模型发布/更新': '🤖',
-                '产品发布/更新': '📦',
-                '行业动态': '📰',
-                '论文研究': '📚',
-                '技巧与观点': '💡'
-            };
-
-            dailyData.sections.forEach((section, sectionIndex) => {
-                const sectionId = `section-${sectionIndex + 1}`;
-                const icon = sectionIcons[section.label] || '📌';
-                
-                const sectionHTML = `
-                    <div class="section" id="${sectionId}">
-                        <h2 class="section-title">
-                            <span class="icon">${icon}</span>
-                            ${section.label}
-                        </h2>
-                        <div class="cards-grid">
-                            ${section.items.map(item => `
-                                <div class="card" style="animation-delay: ${(globalIndex - 1) * 0.1}s">
-                                    <div class="card-header">
-                                        <div class="global-index">${globalIndex}</div>
-                                        <div class="source-chip">${item.sourceName}</div>
-                                    </div>
-                                    <div class="card-title">${item.title}</div>
-                                    <div class="card-summary">${truncateSummary(item.summary)}</div>
-                                    <div class="card-footer">
-                                        <div class="card-time">今天</div>
-                                        <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer" class="btn-original">阅读原文</a>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-                
-                container.innerHTML += sectionHTML;
-                globalIndex += section.items.length;
-            });
-        }
-
-        // 更新统计数据
-        function updateStats() {
-            let total = 0;
-            const counts = {
-                '模型发布/更新': 0,
-                '产品发布/更新': 0,
-                '行业动态': 0,
-                '论文研究': 0,
-                '技巧与观点': 0
-            };
-
-            dailyData.sections.forEach(section => {
-                counts[section.label] = section.items.length;
-                total += section.items.length;
-            });
-
-            document.getElementById('totalCount').textContent = total;
-            document.getElementById('modelCount').textContent = counts['模型发布/更新'];
-            document.getElementById('productCount').textContent = counts['产品发布/更新'];
-            document.getElementById('industryCount').textContent = counts['行业动态'];
-            document.getElementById('paperCount').textContent = counts['论文研究'];
-            document.getElementById('tipCount').textContent = counts['技巧与观点'];
-            document.getElementById('footerTotal').textContent = total;
-        }
-
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            renderContent();
-            updateStats();
-        });
-
-        // 自动同步功能说明：
-        // 要实现每天自动同步，建议使用以下方案之一：
-        // 1. GitHub Actions + Cloudflare Pages：每天定时运行脚本生成新HTML并部署
-        // 2. 使用Service Worker缓存策略，定期检查更新
-        // 3. 添加"刷新"按钮，手动触发API调用获取最新数据
-        // 
-        // 由于浏览器CORS限制，直接从HTML调用AI HOT API会被阻止。
-        // 建议的自动同步实现方式：
-        // 1. 创建一个GitHub Actions workflow，每天08:00北京时间运行
-        // 2. Workflow调用AI HOT API获取最新日报
-        // 3. 使用模板引擎生成新的HTML文件
-        // 4. 自动提交到GitHub仓库并触发Cloudflare Pages部署
-        //
-        // 示例GitHub Actions workflow配置（保存为 .github/workflows/daily-update.yml）：
-        /*
-        name: Daily AI Report Update
-        on:
-          schedule:
-            - cron: '0 0 * * *'  # 北京时间08:00 (UTC+8)
-          workflow_dispatch:
-        
-        jobs:
-          update:
-            runs-on: ubuntu-latest
-            steps:
-              - uses: actions/checkout@v3
-              - name: Fetch AI Daily Report
-                run: |
-                  curl -H "User-Agent: Mozilla/5.0" \
-                    "https://aihot.virxact.com/api/public/daily" \
-                    -o data.json
-                  # 使用Node.js或Python生成新的HTML文件
-              - name: Generate HTML
-                run: node generate-html.js
-              - name: Commit and Push
-                run: |
-                  git config user.name "GitHub Actions"
-                  git config user.email "actions@github.com"
-                  git add .
-                  git commit -m "Daily update: $(date +%Y-%m-%d)"
-                  git push
-        */
+        })();
     </script>
 </body>
 </html>

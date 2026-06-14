@@ -4,15 +4,13 @@ on:
   schedule:
     # 北京时间每天08:00运行 (UTC+8 = UTC 00:00)
     - cron: '0 0 * * *'
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-      actions: write
 
     steps:
       - name: Checkout repository
@@ -21,18 +19,22 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: npm init -y && npm install axios
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Fetch AI Daily Report and Generate HTML
+      - name: Install dependencies
+        run: cd scripts && npm install
+
+      - name: Fetch multi-source data and generate HTML
         env:
-          AIHOT_API: 'https://aihot.virxact.com/api/public/daily'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/generate-html.js
+        run: cd scripts && node generate-html.js
 
       - name: Commit and Push changes
         run: |
-          git config user.name "GitHub Actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ai-daily-dashboard.html || true
           git diff --cached --quiet && echo "ℹ️ 无更新" && exit 0
