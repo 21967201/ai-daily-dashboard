@@ -1,0 +1,53 @@
+name: Daily AI Report Update
+
+on:
+  schedule:
+    # 北京时间每天08:00运行 (UTC+8 = UTC 00:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史以便正确提交
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          npm init -y
+          npm install axios
+      
+      - name: Fetch AI Daily Report and Generate HTML
+        env:
+          AIHOT_API: 'https://aihot.virxact.com/api/public/daily'
+        run: node scripts/generate-html.js
+      
+      - name: Commit and Push changes
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          # 检查是否有更改
+          if [[ -n $(git status -s) ]]; then
+            git add ai-daily-dashboard.html
+            git commit -m "🤖 每日自动更新: $(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M')"
+            git push
+            echo "✅ 已成功更新并推送"
+          else
+            echo "ℹ️ 无数据更新，跳过提交"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
