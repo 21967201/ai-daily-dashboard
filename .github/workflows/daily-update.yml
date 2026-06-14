@@ -19,16 +19,18 @@ jobs:
         with:
           fetch-depth: 0  # 获取完整历史以便正确提交
       
+      # 先创建 package.json（setup-node 的 cache 需要它）
+      - name: Initialize package.json
+        run: npm init -y
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
-        run: |
-          npm init -y
-          npm install axios
+        run: npm install axios
       
       - name: Fetch AI Daily Report and Generate HTML
         env:
