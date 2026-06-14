@@ -17,17 +17,19 @@ const HTML_TEMPLATE = (data) => {
   sections.forEach(s => {
     counts[s.label] = s.items.length;
   });
+
+  // 版块图标映射（移到最外层，所有作用域都可访问）
+  const sectionIcons = {
+    '模型发布/更新': '🤖',
+    '产品发布/更新': '📱',
+    '行业动态': '📰',
+    '论文研究': '📚',
+    '技巧与观点': '💡'
+  };
   
   // 生成卡片HTML
   let globalIndex = 1;
   const cardsHTML = sections.map((section, idx) => {
-    const sectionIcons = {
-      '模型发布/更新': '🤖',
-      '产品发布/更新': '📱',
-      '行业动态': '📰',
-      '论文研究': '📚',
-      '技巧与观点': '💡'
-    };
     const icon = sectionIcons[section.label] || '📌';
     
     const itemsHTML = section.items.map(item => {
