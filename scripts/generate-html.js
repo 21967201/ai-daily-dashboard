@@ -652,7 +652,7 @@ function generateHTML(allData) {
                     <li>搜索框支持标题/来源/摘要关键词过滤</li>
                     <li>点击右上角🌙切换暗黑模式</li>
                     <li>数据来源：AI HOT / GitHub / 学术论文</li>
-                    <li>每2小时自动更新最新资讯</li>
+                    <li>每天 08:00 自动更新最新资讯</li>
                 </ul>
             </div>
         </div>
@@ -662,7 +662,7 @@ function generateHTML(allData) {
         <div class="footer-info">
             共 <span id="footerTotal">${totalCount}</span> 条资讯
             | 数据来源：AI HOT / GitHub 热门 / 学术论文
-            | 每2小时自动更新
+            | 每天 08:00 自动更新
         </div>
     </footer>
 
