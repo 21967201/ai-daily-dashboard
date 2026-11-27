@@ -2,7 +2,10 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-const AIHOT_API = 'https://aihot.virxact.com/api/public/daily';
+// AI HOT v1 API（旧 /api/public 接口已于 2026-10-31 停止服务）
+// 迁移说明：https://aihot.news/agent?tab=api#legacy-api-migration
+const AIHOT_API_BASE = 'https://aihot.news/api/v1';
+const AIHOT_DAILY_LATEST = `${AIHOT_API_BASE}/dailies/latest`;
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36';
 
 // ========== 翻译函数 ==========
@@ -50,16 +53,61 @@ async function translateBatch(texts, maxConcurrency = 5) {
 }
 
 // ========== 获取 AI HOT 日报 ==========
+// v1 响应结构：{ schemaVersion, report: { date, sections: [{ label, items: [{ title, summary, source: { name }, links: { original, aihot } }] }] } }
+// 页面渲染使用扁平结构 { label, items: [{ title, summary, sourceName, sourceUrl }] }，这里统一归一化
+function normalizeDailyReport(report) {
+  const sections = (report.sections || []).map(sec => ({
+    label: sec.label || sec.title || '未分类',
+    items: (sec.items || []).map(item => ({
+      title: item.title,
+      summary: item.summary || '',
+      sourceName: (item.source && item.source.name)
+        || (item.attribution && item.attribution.name)
+        || 'AI HOT',
+      sourceUrl: (item.links && (item.links.original || item.links.aihot))
+        || (item.attribution && item.attribution.url)
+        || ''
+    }))
+  }));
+
+  return { date: report.date, sections };
+}
+
+async function requestDaily(url) {
+  const res = await axios.get(url, {
+    headers: {
+      'User-Agent': USER_AGENT,
+      'Accept': 'application/json',
+      'Accept-Encoding': 'gzip, deflate, br'
+    },
+    timeout: 15000,
+    validateStatus: status => status === 200 || status === 304
+  });
+  // 304 表示内容未变化；不复用旧 cursor / ETag，每次都从 v1 首屏重新取
+  if (res.status === 304) return null;
+
+  const body = res.data || {};
+  const report = body.report || body;
+  if (!report || !Array.isArray(report.sections)) return null;
+
+  return normalizeDailyReport(report);
+}
+
 async function fetchAIHot() {
   try {
-    const res = await axios.get(AIHOT_API, {
-      headers: { 'User-Agent': USER_AGENT },
-      timeout: 15000
-    });
-    if (res.data && res.data.sections) {
-      console.log(`✅ AI HOT: ${res.data.date}，共 ${res.data.sections.reduce((s, sec) => s + sec.items.length, 0)} 条`);
-      return res.data;
+    // 取最新日报，失败时回退到 /dailies/{date}（北京时间前一天）
+    let data = await requestDaily(AIHOT_DAILY_LATEST);
+    if (!data) {
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      data = await requestDaily(`${AIHOT_API_BASE}/dailies/${yesterdayStr}`);
     }
+    if (data) {
+      const total = data.sections.reduce((s, sec) => s + sec.items.length, 0);
+      console.log(`✅ AI HOT: ${data.date}，共 ${total} 条`);
+      return data;
+    }
+    console.log('⚠️ AI HOT: 响应中未找到 report.sections');
   } catch (e) {
     console.log(`⚠️ AI HOT 获取失败: ${e.message}`);
   }
@@ -146,7 +194,7 @@ const AI_TOOLS = [
   { name: 'Coze扣子', url: 'https://www.coze.com', desc: '字节AI智能体平台', icon: '🤖' },
   { name: 'Dify', url: 'https://dify.ai', desc: '开源LLM应用开发平台', icon: '🛠️' },
   { name: 'HuggingFace', url: 'https://huggingface.co', desc: '全球最大AI模型社区', icon: '🤗' },
-  { name: 'AI HOT日报', url: 'https://aihot.virxact.com', desc: 'AI行业资讯聚合', icon: '📰' },
+  { name: 'AI HOT日报', url: 'https://aihot.news', desc: 'AI行业资讯聚合', icon: '📰' },
   { name: 'Product Hunt', url: 'https://www.producthunt.com/topics/artificial-intelligence', desc: 'AI新品发现平台', icon: '🚀' },
   { name: 'Papers with Code', url: 'https://paperswithcode.com', desc: '论文与代码对照平台', icon: '📝' },
 ];

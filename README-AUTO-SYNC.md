@@ -1,3 +1,14 @@
+---
+AIGC:
+    Label: "1"
+    ContentProducer: 001191440300708461136T1XGW3
+    ProduceID: a5313bce0664ae3d85a3592266e77153_8f0f73a4ea1711f1a20652540072b1e8
+    ReservedCode1: bYBiSGvsRE9ycAG5OO66IgMJq2YajSYj38W2YXlR8sUcnu9YHwYPo1MLXYI+6KBkohJwFGkovb6krVICAjEgeEuycv2LJxOrbe94KYn++weFQP0U/DrL+3B8SXAnkHf7xNQI/T3MSNRWlgy6Q1Q7XFXkANYbV8YwIDGZ74GGrZrn8mPOPb0hxZjmN7s=
+    ContentPropagator: 001191440300708461136T1XGW3
+    PropagateID: a5313bce0664ae3d85a3592266e77153_8f0f73a4ea1711f1a20652540072b1e8
+    ReservedCode2: bYBiSGvsRE9ycAG5OO66IgMJq2YajSYj38W2YXlR8sUcnu9YHwYPo1MLXYI+6KBkohJwFGkovb6krVICAjEgeEuycv2LJxOrbe94KYn++weFQP0U/DrL+3B8SXAnkHf7xNQI/T3MSNRWlgy6Q1Q7XFXkANYbV8YwIDGZ74GGrZrn8mPOPb0hxZjmN7s=
+---
+
 # AI日报晨报 - 自动同步配置指南
 
 本指南将帮助你配置GitHub Actions + Cloudflare Pages的自动同步方案。
@@ -124,7 +135,7 @@ if (error.response && error.response.status === 404) {
   const yesterdayStr = yesterday.toISOString().split('T')[0];
   
   const fallbackResponse = await axios.get(
-    `https://aihot.virxact.com/api/public/daily/${yesterdayStr}`,
+    `https://aihot.news/api/v1/dailies/${yesterdayStr}`,
     { headers: { 'User-Agent': USER_AGENT } }
   );
   data = fallbackResponse.data;
@@ -269,3 +280,4 @@ A: 有，600 requests/minute/IP。本方案每天只调用1次，远未达上限
 ---
 
 **祝你使用愉快！ 🎉**
+*（内容由AI生成，仅供参考）*
