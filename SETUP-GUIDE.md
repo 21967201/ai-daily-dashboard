@@ -1,3 +1,14 @@
+---
+AIGC:
+    Label: "1"
+    ContentProducer: 001191440300708461136T1XGW3
+    ProduceID: a5313bce0664ae3d85a3592266e77153_8bfb7bedea1711f1961f525400f8a581
+    ReservedCode1: tjlVHzRklzYddod0EiDr8cHCSD1vGvTkjmUJTUqc2HpRJr2fQBkghJMKZMw+PrhsThCwFeLl7MeRSfelJOYQ7v4fDwhbmQ6tI7yKaFSgpO/KrzB5WUJjFR6H6cK1K6JK1kgs44dMf+SBA1yNMntPtP+b2rbdU9AyI92cen2Nr54OPufMjkpIz0jZIR8=
+    ContentPropagator: 001191440300708461136T1XGW3
+    PropagateID: a5313bce0664ae3d85a3592266e77153_8bfb7bedea1711f1961f525400f8a581
+    ReservedCode2: tjlVHzRklzYddod0EiDr8cHCSD1vGvTkjmUJTUqc2HpRJr2fQBkghJMKZMw+PrhsThCwFeLl7MeRSfelJOYQ7v4fDwhbmQ6tI7yKaFSgpO/KrzB5WUJjFR6H6cK1K6JK1kgs44dMf+SBA1yNMntPtP+b2rbdU9AyI92cen2Nr54OPufMjkpIz0jZIR8=
+---
+
 # 🎉 AI日报晨报 - 自动同步配置完成
 
 ## ✅ 已创建的文件
@@ -13,7 +24,7 @@
 
 ### 2. HTML生成脚本
 **文件**: `scripts/generate-html.js`
-- 调用AI HOT API (`https://aihot.virxact.com/api/public/daily`)
+- 调用AI HOT API (`https://aihot.news/api/v1/dailies/latest`)
 - 使用正确的User-Agent避免403错误
 - 将数据注入HTML模板
 - 生成完整的单文件HTML
@@ -236,7 +247,7 @@ catch (error) {
     const yesterdayStr = yesterday.toISOString().split('T')[0];
     
     const fallbackResponse = await axios.get(
-      `https://aihot.virxact.com/api/public/daily/${yesterdayStr}`,
+      `https://aihot.news/api/v1/dailies/${yesterdayStr}`,
       { headers: { 'User-Agent': USER_AGENT } }
     );
     data = fallbackResponse.data;
@@ -331,3 +342,4 @@ F:\WorkBuddyX\2026-06-14-10-38-04\
 - 确保所有文件都已推送到GitHub
 - 耐心等待GitHub Actions和Cloudflare Pages的首次运行
 - 有问题随时查看日志！
+*（内容由AI生成，仅供参考）*
